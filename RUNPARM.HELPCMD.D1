@@ -1,4 +1,24 @@
-RUNPARM will issue a LOAD SVC for a module loaded above RUNPARM in the
-user  area.  Any tokens past the command name on the command line are condensed
-and passed to the program as an OS parm field.  An option allows the COMPSWT
-flag to be ON or OFF during execution.
+RUNPARM                                                            CMS Command
+
+RUNPARM is used to invoke a CMS MODULE which may be expecting OS style
+parameters.  RUNPARM will issue a LOAD SVC for a module loaded above RUNPARM
+in the user area.  Any tokens past the command name on the command line are
+condensed and passed to the program as an OS parm field.  An option allows
+the COMPSWT flag to be ON or OFF during execution.
+
++----------+-----------------------------------------------------------------+
+| RUNPARM  | fn token1 ... tokenn [( [COMPON|COMPOFF] [)]]                   |
++----------+-----------------------------------------------------------------+
+
+where:
+
+COMPON   turns the COMPSWT flag on.  When this flag is on, any program
+         called by a LINK, LOAD, XCTL, or ATTACH macro instruction must
+         be a nonrelocatable module in a file with a filetype of MODULE;
+         it is loaded via the CMS LO~DMOD command.
+
+COMPOFF  turns the COMPSWT flag off. When this flag is off, any program
+         called by a LINK, LO~D, XCTL, or ATTACH macro instruction must
+         be a relocatable object module residing in a file with a
+         filetype of TEXT or TXTLIB; it is loaded via the CMS INCLUDE
+         command.
