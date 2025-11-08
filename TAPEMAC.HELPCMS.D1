@@ -1,0 +1,73 @@
+TAPEMAC                                                  CMS Transient command
+
+Use the TAPEMAC command to create a CMS MACLIB from an unloaded partitioned
+data set (PDS) from a tape created by the IEHMOVE utility program under OS.
+The PDS from which the tape was created can be blocked, but the logical record
+length must be 80. The format of the TAPEMAC command is:
+
++---------+------------------------------------------------------------------+
+| TAPEMAC |  fn [ (options...[)]]                                            |
+|         |                           options:                               |
+|         |                           [TAPn | TAP1]                          |
+|         |                           [ ITEMCT yyyyy | ITEMCT 50000]         |
++---------+------------------------------------------------------------------+
+
+where:
+
+fn        specifies the filename of the first, or only, CMS MACLIB to be
+          created on the A-disk.  If fn MACLIB already exists on the A-disk,
+          the old one is erased; no warning messaqe is issued.
+
+     Options:
+
+     TAPn  specifies the symbolic address of the tape, where n is a number
+           between 1 and 4 corresponding to virtual device addresses 181
+           through 184, respectively. The default is TAP1.
+
+     ITEMCT yyyyy
+           specifies the item count threshold of each MACLIB to be created,
+           which is the maximum number of records to be written into each file.
+           yyyyy is a number between 0 and 62500 (commas are not allowed). If
+           ITEMCT is not specified, the default is 50000.
+
+Usage Notes
+
+Tape records are read and placed into fn MACLIB until the file size exceeds the
+ITEMCT (item count); loading then continues until the end of the current member
+is reached.  Then another CMS file is created; its filename consists of the
+number 2 appended to the end of the filename specified (fn) if the filename is
+seven characters or less.  The appended number overlays the last character of
+the filename if the name is eight characters long. Loading then continues with
+this new name.  For example, if you enter the command:
+
+tapemac mylib
+
+you may create files named MYLIB MACLIB, KYLIB2 MACLIB, MYLIB3 MACLIB, and so
+on.
+
+This process continues until up to nine CMS files have been created.  If more
+data exists on the tape than can fit in nine CMS files, processing is
+terminated with the error message DMSTMA139S.  The maximum size of the unloaded
+PDS which can be loaded into CMS MACLIBs would be approximately 9 times 62500
+or 584,500 records.
+
+Responses
+
+The TAPEMAC command displays the message:
+
+     LOADING fn MACtIB
+
+for each macro library created.
+
+Other Messages and Return Codes
+
+DMSTMA001E NO FILENAME SPECIFIED RC=24
+DMSTMA003E INVALID OPTION 'option' RC=24
+DMSTMA057E INVALID RECORD FORMAT RC=32
+DMSTMA070E INVALID PARAMETER 'parameter' RC=24
+DMSTMA105S ERROR nn WRITING FILE fn ft ON DISK RC=100
+DMSTMA109S VIRTUAL STORAGE CAPACITY EXCEEDED RC=104
+DMSTMA110S ERROR READING TAPn RC=100
+DMSTMA137S ERROR nn ON STATE FOR fn ft RC=100
+DMSTMA138S ERROR nn ERASING 'fn ft' BEFORE LOADING TAPE RC=100
+DMSTMA139S TAPE FILE EXCEEDS 9 CMS MACLIBS RC=104
